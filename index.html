@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#153c3d">
+  <title>Explorando la distribución normal · Laboratorio de estadística</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="statistics.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#simulador">Ir al simulador</a>
+  <header class="site-header">
+    <div class="brand"><span class="brand-symbol" aria-hidden="true">∿</span><div>Laboratorio de estadística<small>TECNOLOGÍA EN DESARROLLO DE SOFTWARE</small></div></div>
+    <span class="course-tag">Estadística Descriptiva <span aria-hidden="true">/</span> Módulo 3</span>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div><div class="eyebrow"><span class="tiny-line"></span> EXPLORA · VISUALIZA · COMPRENDE</div><h1 id="page-title">Explorando la<br>distribución <em>normal</em></h1><p>Modifica los parámetros, observa la curva y relaciona valores,<br class="desktop-break"> puntajes z, áreas y probabilidades.</p></div>
+      <div class="intro-note"><span class="note-icon" aria-hidden="true">↗</span><p>Un valor.<br>Dos escalas.<br><strong>La misma posición.</strong></p><span>UN LABORATORIO PARA EXPERIMENTAR</span></div>
+    </section>
+    <div class="learning-path" aria-label="Ruta de aprendizaje"><span><b>01</b> Datos</span><i aria-hidden="true">→</i><span><b>02</b> Representación</span><i aria-hidden="true">→</i><span><b>03</b> Cálculo</span><i aria-hidden="true">→</i><span><b>04</b> Interpretación</span></div>
+    <section id="simulador" class="simulator" aria-label="Simulador de distribución normal">
+      <div class="workspace-heading"><div class="mode-switch" role="group" aria-label="Modo de trabajo"><button type="button" id="mode-direct" aria-pressed="true">De X a probabilidad <span aria-hidden="true">→</span></button><button type="button" id="mode-inverse" aria-pressed="false">De probabilidad a X <span aria-hidden="true">→</span></button></div><span class="live-tag"><span aria-hidden="true"></span> Actualización en tiempo real</span></div>
+      <div class="workspace">
+        <aside class="parameters card">
+          <div class="section-heading"><span class="section-number">01</span><h2>Parámetros de la distribución</h2></div>
+          <p class="muted parameter-hint">Ingresa los datos y observa cómo cambia la distribución.</p>
+          <form id="parameters-form" novalidate>
+            <div class="distribution-fields">
+              <div class="field"><label for="mean">Media <span class="math-symbol">μ</span></label><input id="mean" type="number" value="50" step="any" aria-describedby="mean-error"><p class="field-error" id="mean-error" hidden></p></div>
+              <div class="field"><label for="standardDeviation">Desviación estándar <span class="math-symbol">σ</span></label><input id="standardDeviation" type="number" value="10" step="any" aria-describedby="standardDeviation-error"><p class="field-error" id="standardDeviation-error" hidden></p></div>
+            </div>
+            <div class="slider-field"><label for="mean-slider">Explora el centro <span>μ</span></label><input id="mean-slider" type="range" min="10" max="90" value="50" step="0.1"></div>
+            <div class="slider-field"><label for="sigma-slider">Explora la dispersión <span>σ</span></label><input id="sigma-slider" type="range" min="2" max="25" value="10" step="0.1"></div>
+            <div class="field region-field"><label for="region">Región que deseas calcular</label><select id="region"><option value="left">A la izquierda de x · P(X &lt; x)</option><option value="right">A la derecha de x · P(X &gt; x)</option><option value="between">Entre dos valores · P(x₁ &lt; X &lt; x₂)</option><option value="outside">Fuera de dos valores · dos colas</option></select></div>
+            <div id="direct-fields"><div class="value-fields"><div class="field"><label id="x-label" for="x">Valor observado <span class="math-symbol">x</span></label><input id="x" type="number" value="45" step="any" aria-describedby="x-error"><p class="field-error" id="x-error" hidden></p></div><div class="field" id="upper-field" hidden><label for="x2">Límite superior <span class="math-symbol">x₂</span></label><input id="x2" type="number" value="60" step="any" aria-describedby="x2-error"><p class="field-error" id="x2-error" hidden></p></div></div><div class="slider-field"><label for="x-slider">Explora la posición <span id="x-slider-symbol">x</span></label><input id="x-slider" type="range" min="10" max="90" value="45" step="0.1"></div></div>
+            <div id="inverse-fields" hidden><div class="field"><label for="probability">Probabilidad <span class="math-symbol">p</span></label><input id="probability" type="number" value="0.95" step="any" aria-describedby="probability-hint probability-error"><p id="probability-hint" class="input-hint">Ingresa un decimal mayor que 0 y menor que 1.</p><p class="field-error" id="probability-error" hidden></p></div></div>
+            <p id="global-error" class="error-notice" role="alert" hidden></p>
+            <div class="actions"><button type="submit" class="primary-button">Calcular <span aria-hidden="true">↗</span></button><button type="button" class="reset-button" id="reset">↺ <span>Restablecer</span></button></div>
+          </form>
+          <div class="parameter-footer"><span aria-hidden="true">ⓘ</span> El puntaje z indica posición. La probabilidad indica área.</div>
+        </aside>
+        <section class="chart-card card" aria-labelledby="chart-heading">
+          <div class="chart-header"><div><div class="eyebrow">02 / REPRESENTACIÓN</div><h2 id="chart-heading">Cada área cuenta una historia.</h2></div><span id="distribution-badge" class="distribution-badge">μ = 50 · σ = 10</span></div>
+          <div class="chart-meta"><div class="legend"><span><i class="legend-curve"></i> Distribución actual</span><span><i class="legend-area"></i> Área seleccionada</span></div><label class="reference-toggle"><input type="checkbox" id="show-reference" checked> Curva de referencia</label></div>
+          <div id="chart-content"><svg id="normal-chart" viewBox="0 0 800 360" role="img" aria-labelledby="chart-title chart-description"><title id="chart-title">Distribución normal</title><desc id="chart-description">Curva normal con la región seleccionada sombreada.</desc></svg>
+            <div class="chart-summary"><span id="region-caption">Área a la izquierda del valor observado</span><strong id="chart-probability">30.85 <small>% del área total</small></strong></div>
+            <div class="scales-heading"><h3>Escala original y escala estándar</h3><span>Misma posición, distinta unidad</span></div><svg id="scale-chart" viewBox="0 0 800 122" role="img" aria-labelledby="scale-title scale-description"><title id="scale-title">Correspondencia entre X y Z</title><desc id="scale-description">Dos ejes alineados muestran el valor original y su puntaje z.</desc></svg>
+            <p class="chart-footnote" id="chart-note">La línea discontinua marca la media. El área total bajo la curva es 1.</p>
+          </div><div id="chart-empty" class="empty-state" hidden><span aria-hidden="true">∿</span><h3>La curva empieza con tus datos</h3><p>Revisa los campos indicados para continuar explorando.</p></div>
+        </section>
+      </div>
+    </section>
+    <section class="results-section" id="results" aria-labelledby="results-heading" tabindex="-1">
+      <div class="results-heading"><div><div class="eyebrow">03 / DEL DATO AL RESULTADO</div><h2 id="results-heading">La matemática, paso a paso.</h2></div><span id="result-status" class="status-pill">✓ Cálculo actualizado</span></div>
+      <div id="results-content" class="results-grid"></div>
+      <p id="rounding-note" class="rounding-note">Φ(z) es el área acumulada a la izquierda de z. Calculamos con precisión completa y redondeamos solo al mostrar.</p>
+    </section>
+    <section class="examples-section" aria-labelledby="examples-heading"><div><div class="eyebrow">SIGUE EXPLORANDO</div><h2 id="examples-heading">Un punto de partida.</h2><p class="muted">Carga un ejemplo y hazlo tuyo.</p></div><div class="examples-grid" id="examples"></div></section>
+    <details class="guide"><summary>¿Qué observar al mover los controles? <span aria-hidden="true">+</span></summary><div class="guide-grid"><p><strong>La media mueve el centro.</strong> Compara la curva actual con la referencia gris. Cambiar μ desplaza la distribución en la escala X.</p><p><strong>La desviación cambia la dispersión.</strong> Una σ menor concentra la curva y aumenta su altura. Una σ mayor la ensancha. El área total sigue siendo 1.</p><p><strong>Un área es una probabilidad.</strong> La altura es densidad; z expresa distancia a la media en desviaciones estándar. La escala se ajusta para mantener visibles todos los límites.</p></div></details>
+  </main>
+  <footer><span>Laboratorio de estadística <b>·</b> Aprender observando.</span><span>Distribución normal <b>·</b> Funciona sin conexión</span></footer>
+  <div id="announcement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
