@@ -7,6 +7,7 @@ let state = {...initialState};
 let reference = {mean:50,standardDeviation:10};
 let result = null;
 let announcementTimer;
+let lastValidProbability = String(initialState.probability);
 const numberIds = ['mean','standardDeviation','x','x2','probability'];
 const format = (n,digits=3) => {
   if(n===0) return '0';
@@ -89,7 +90,7 @@ function configureControls() {
   $('x-label').innerHTML=pair ? 'Límite inferior <span class="math-symbol">x₁</span>' : 'Valor observado <span class="math-symbol">x</span>';
   $('x-slider-symbol').textContent=pair?'x₁':'x';
 }
-function syncFields() {numberIds.forEach(id=>{$(id).value=state[id];});configureControls();syncSliders();}
+function syncFields() {numberIds.forEach(id=>{$(id).value=state[id];});lastValidProbability=String(state.probability);configureControls();syncSliders();}
 function setSlider(id,min,max,value,step) {
   const node=$(id);node.min=min;node.max=max;node.step=step;node.value=value;
   node.setAttribute('aria-valuetext',valueText(value));
@@ -306,7 +307,50 @@ function renderCalculation() {
   $('rounding-note').textContent='Φ(z) es el área acumulada a la izquierda de z. Calculamos con precisión completa y redondeamos solo al mostrar. Por eso, sumar o restar los valores de una tabla ya redondeada puede cambiar la última cifra. En el procedimiento se muestran hasta 6 decimales para hacer visible esta diferencia.';
 }
 
-numberIds.forEach(id=>$(id).addEventListener('input',update));
+function isAllowedProbability(value) {
+  const number=Number(value);
+  return value.trim()!=='' && Number.isFinite(number) && number>0 && number<1;
+}
+function restoreProbability() {
+  $('probability').value=lastValidProbability;
+  update();
+  announce('La probabilidad debe ser mayor que 0 y menor que 1. Se conserva el último valor válido.');
+}
+function handleProbabilityInput(event) {
+  const input=$('probability');
+  if(isAllowedProbability(input.value)) {
+    lastValidProbability=input.value;
+    update();
+    return;
+  }
+  // Allow an unfinished decimal (0, 0.00…) or deletion while typing 0.005.
+  // It is never calculated and is restored on blur/Enter if left unfinished.
+  // Native spinner events are not text edits, so they cannot reach 0 or 1.
+  const textEdit=event instanceof InputEvent &&
+    (event.inputType==='insertText' || event.inputType.startsWith('delete'));
+  if(textEdit && (input.value==='' || /^0*(?:\.0*)?$/.test(input.value))) {
+    update();
+    return;
+  }
+  restoreProbability();
+}
+function finishProbabilityEdit() {
+  if(!isAllowedProbability($('probability').value)) restoreProbability();
+}
+numberIds.filter(id=>id!=='probability').forEach(id=>$(id).addEventListener('input',update));
+$('probability').addEventListener('input',handleProbabilityInput);
+$('probability').addEventListener('change',finishProbabilityEdit);
+$('probability').addEventListener('blur',finishProbabilityEdit);
+$('probability').addEventListener('beforeinput',event=>{
+  if(event.data && /[-+eE]/.test(event.data)) event.preventDefault();
+});
+$('probability').addEventListener('paste',event=>{
+  const pasted=event.clipboardData?.getData('text').trim();
+  if(pasted!==undefined && !isAllowedProbability(pasted)) {
+    event.preventDefault();
+    announce('Solo puedes pegar una probabilidad mayor que 0 y menor que 1.');
+  }
+});
 [['mean-slider','mean'],['sigma-slider','standardDeviation'],['x-slider','x']].forEach(([slider,field])=>{
   $(slider).addEventListener('input',()=>{$(field).value=$(slider).value;update();});
 });
